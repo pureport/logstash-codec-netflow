@@ -319,6 +319,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       array = BinData::Array.new(:type => template, :read_until => :eof)
       records = array.read(record.flowset_data)
 
+      @logger.debug("Processing #{records.length} records from flowset")
+
       records.each do |r|
         event = {
           LogStash::Event::TIMESTAMP => LogStash::Timestamp.at(flowset.unix_sec),
@@ -600,6 +602,18 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     # @see `TemplateRegistry#register(String,Array<>)`
     # @api private
     def do_register(key, field_tuples)
+
+      # Replace duplicate field names with ""
+      field_names = []
+      field_tuples.each do |field|
+        if field_names.include?(field[1])
+          @logger.debug("Hiding duplicate instance of field #{field[1]} in template")
+          field[1] = ""
+        else
+          field_names.push(field[1])
+        end
+      end
+
       template = BinData::Struct.new(:fields => field_tuples, :endian => :big)
 
       catch(:invalid_template) do
