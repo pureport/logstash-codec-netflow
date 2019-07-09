@@ -6,6 +6,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh """
+                    whoami
+                    pwd
                     bundle install
                 """
             }
