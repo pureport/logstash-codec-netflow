@@ -1,12 +1,14 @@
 pipeline {
     agent {
-      docker { image 'jruby:9' }
+      docker {
+        image 'jruby:9'
+        args '-u root'
+      }
     }
     stages {
         stage('Install Dependencies') {
             steps {
                 sh """
-                    whoami
                     pwd
                     bundle install
                 """
