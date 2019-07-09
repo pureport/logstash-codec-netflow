@@ -28,6 +28,11 @@ pipeline {
                 """
             }
         }
+        stage('Archive') {
+            steps {
+                archiveArtifacts 'logstash-codec-netflow-*.gem'
+            }
+        }
     }
     post {
         success {
